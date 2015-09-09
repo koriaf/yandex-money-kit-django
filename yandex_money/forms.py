@@ -86,7 +86,7 @@ class BasePaymentForm(forms.Form):
             cd['invoiceId'],
             cd['customerNumber'],
             settings.YANDEX_MONEY_SHOP_PASSWORD,
-        )))).hexdigest().upper()
+        ))).encode('utf-8')).hexdigest().upper()
 
     @classmethod
     def check_md5(cls, cd):
@@ -96,7 +96,7 @@ class BasePaymentForm(forms.Form):
         scid = self.cleaned_data['scid']
         if (
             scid != settings.YANDEX_MONEY_SCID and
-            not scid in Payment.get_used_scids()
+            scid not in Payment.get_used_scids()
         ):
             raise forms.ValidationError(self.error_messages[self.ERROR_MESSAGE_CODES.BAD_SCID])
         return scid
@@ -105,7 +105,7 @@ class BasePaymentForm(forms.Form):
         shop_id = self.cleaned_data['shopId']
         if (
             shop_id != settings.YANDEX_MONEY_SHOP_ID and
-            not shop_id in Payment.get_used_shop_ids()
+            shop_id not in Payment.get_used_shop_ids()
         ):
             raise forms.ValidationError(self.error_messages[self.ERROR_MESSAGE_CODES.BAD_SHOP_ID])
         return shop_id
